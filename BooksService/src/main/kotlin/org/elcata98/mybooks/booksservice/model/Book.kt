@@ -7,12 +7,14 @@ import org.apache.commons.lang3.builder.ToStringStyle
 import java.util.UUID
 
 class Book {
-    var bookId: UUID = UUID.randomUUID()
+
+    var bookId: String? = null
         private set
 
     lateinit var title: String
     lateinit var author: String
     lateinit var language: String
+
     var year: Short? = null
     var isbn: String? = null
     var editorial: String? = null
@@ -22,6 +24,12 @@ class Book {
     var volume: Byte = 1
     var location: String? = null
     var summary: String? = null
+
+    fun generateId() {
+        if (bookId == null){
+            bookId = UUID.randomUUID().toString()
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
 
