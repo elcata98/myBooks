@@ -7,6 +7,6 @@ import java.util.*
 interface BookRepository : Repository<Book, UUID> {
 
     fun save(book: Book): Book
-    fun findByBookId(bookId: UUID): Book
-    fun delete(book: Book)
+    fun findByBookId(bookId: String?): Book?
+    fun deleteByBookId(bookId: String?)
 }

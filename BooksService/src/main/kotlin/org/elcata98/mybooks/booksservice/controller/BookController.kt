@@ -1,6 +1,11 @@
 package org.elcata98.mybooks.booksservice.controller
 
 import org.elcata98.mybooks.booksservice.model.Book
+import org.elcata98.mybooks.booksservice.response.Response
+import org.elcata98.mybooks.booksservice.response.ResponseEntityBuilder
+import org.elcata98.mybooks.booksservice.service.BookService
+import org.elcata98.mybooks.booksservice.validator.BookValidator
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -11,50 +16,42 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.net.URI
 import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping("/books")
 class BookController {
 
+    @Autowired
+    final lateinit var bookService: BookService
+
+    @Autowired
+    final lateinit var bookValidator: BookValidator
+
+    @Autowired
+    final lateinit var bookResponseEntityBuilder: ResponseEntityBuilder<Book>
+
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun create(@RequestBody book: Book, httpRequest: HttpServletRequest): ResponseEntity<Book> {
+    fun create(@RequestBody book: Book, httpRequest: HttpServletRequest): ResponseEntity<Response<Book>> {
 
-//        TODO: implement
-        book.generateId()
-
-        val createdURI = httpRequest.requestURI + "/" + book.bookId
-
-        return ResponseEntity.created(URI(createdURI)).body(book)
+        return bookResponseEntityBuilder.buildCreateResponseEntity(bookService.create(bookValidator.validateCreateBook(book)), httpRequest)
     }
 
-    @GetMapping(value = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun get(@PathVariable id: String): ResponseEntity<Book> {
+    @GetMapping(value = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun get(@PathVariable id: String): ResponseEntity<Response<Book>> {
 
-//        TODO: implement
-        val book = Book()
-        book.title = "Title"
-        book.author = "Author"
-        book.language = "Catalan"
-        book.generateId()
-
-        return ResponseEntity.ok(book)
+        return bookResponseEntityBuilder.buildGetResponseEntity(bookService.get(id))
     }
 
     @PutMapping(value = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun update(@PathVariable id: String, @RequestBody book: Book): ResponseEntity<Book> {
+    fun update(@PathVariable id: String, @RequestBody book: Book): ResponseEntity<Response<Book>> {
 
-//        TODO: implement
-
-        return ResponseEntity.ok(book)
+        return bookResponseEntityBuilder.buildUpdateResponseEntity(bookService.update(bookValidator.validateUpdateBook(id, book)))
     }
 
-    @DeleteMapping(value = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun delete(@PathVariable id: String): ResponseEntity<Book> {
+    @DeleteMapping(value = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun delete(@PathVariable id: String): ResponseEntity<Response<Book>> {
 
-//        TODO: implement
-
-        return ResponseEntity.ok().build()
+        return bookResponseEntityBuilder.buildDeleteResponseEntity(bookService.delete(id))
     }
 }

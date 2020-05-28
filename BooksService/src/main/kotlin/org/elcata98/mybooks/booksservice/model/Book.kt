@@ -4,10 +4,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder
 import org.apache.commons.lang3.builder.HashCodeBuilder
 import org.apache.commons.lang3.builder.ToStringBuilder
 import org.apache.commons.lang3.builder.ToStringStyle
+import org.springframework.data.annotation.Id
 import java.util.UUID
 
 class Book {
 
+    @Id
     var bookId: String? = null
         private set
 
@@ -26,7 +28,7 @@ class Book {
     var summary: String? = null
 
     fun generateId() {
-        if (bookId == null){
+        if (bookId == null) {
             bookId = UUID.randomUUID().toString()
         }
     }
