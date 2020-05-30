@@ -26,38 +26,38 @@ import java.net.URISyntaxException;
 public class UserController {
 
     private final EntityService<User> entityService;
-    private final ResponseEntityBuilder<User> userResponseEntityBuilder;
-    private final EntityValidator<User> userEntityValidator;
+    private final ResponseEntityBuilder<User> responseEntityBuilder;
+    private final EntityValidator<User> entityValidator;
 
 
-    public UserController(final EntityService<User> entityService, final ResponseEntityBuilder<User> userResponseEntityBuilder,
-                          final EntityValidator<User> userEntityValidator) {
+    public UserController(final EntityService<User> entityService, final ResponseEntityBuilder<User> responseEntityBuilder,
+                          final EntityValidator<User> entityValidator) {
         this.entityService = entityService;
-        this.userResponseEntityBuilder = userResponseEntityBuilder;
-        this.userEntityValidator = userEntityValidator;
+        this.responseEntityBuilder = responseEntityBuilder;
+        this.entityValidator = entityValidator;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<User>> create(@RequestBody @Valid User user, HttpServletRequest httpServletRequest) throws URISyntaxException {
 
-        return userResponseEntityBuilder.buildCreateResponseEntity(entityService.create(userEntityValidator.validateCreate(user)), httpServletRequest);
+        return responseEntityBuilder.buildCreateResponseEntity(entityService.create(entityValidator.validateCreate(user)), httpServletRequest);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<User>> get(@PathVariable String id) {
 
-        return userResponseEntityBuilder.buildGetResponseEntity(entityService.get(id));
+        return responseEntityBuilder.buildGetResponseEntity(entityService.get(id));
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<User>> update(@PathVariable String id, @RequestBody @Valid User user) {
 
-        return userResponseEntityBuilder.buildUpdateResponseEntity(entityService.update(userEntityValidator.validateUpdate(id, user)));
+        return responseEntityBuilder.buildUpdateResponseEntity(entityService.update(entityValidator.validateUpdate(id, user)));
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Response<User>> delete(@PathVariable String id) {
 
-        return userResponseEntityBuilder.buildDeleteResponseEntity(entityService.delete(id));
+        return responseEntityBuilder.buildDeleteResponseEntity(entityService.delete(id));
     }
 }

@@ -1,7 +1,7 @@
 package org.elcata98.mybooks.booksservice.controller;
 
 
-import org.elcata98.mybooks.booksservice.model.Book;
+import org.elcata98.mybooks.booksservice.model.Review;
 import org.elcata98.mybooks.booksservice.response.Response;
 import org.elcata98.mybooks.booksservice.response.ResponseEntityBuilder;
 import org.elcata98.mybooks.booksservice.service.EntityService;
@@ -22,40 +22,41 @@ import javax.validation.Valid;
 import java.net.URISyntaxException;
 
 @RestController
-@RequestMapping(path = "/books")
-public class BookController {
+@RequestMapping(path = "/reviews")
+public class ReviewController {
 
-    private final EntityService<Book> entityService;
-    private final ResponseEntityBuilder<Book> responseEntityBuilder;
-    private final EntityValidator<Book> entityValidator;
+    private final EntityService<Review> entityService;
+    private final ResponseEntityBuilder<Review> responseEntityBuilder;
+    private final EntityValidator<Review> entityValidator;
 
-    public BookController(final EntityService<Book> entityService, final ResponseEntityBuilder<Book> responseEntityBuilder,
-                          final EntityValidator<Book> entityValidator) {
+
+    public ReviewController(final EntityService<Review> entityService, final ResponseEntityBuilder<Review> responseEntityBuilder,
+                            final EntityValidator<Review> entityValidator) {
         this.entityService = entityService;
         this.responseEntityBuilder = responseEntityBuilder;
         this.entityValidator = entityValidator;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<Book>> create(@RequestBody @Valid Book book, HttpServletRequest httpServletRequest) throws URISyntaxException {
+    public ResponseEntity<Response<Review>> create(@RequestBody @Valid Review review, HttpServletRequest httpServletRequest) throws URISyntaxException {
 
-        return responseEntityBuilder.buildCreateResponseEntity(entityService.create(entityValidator.validateCreate(book)), httpServletRequest);
+        return responseEntityBuilder.buildCreateResponseEntity(entityService.create(entityValidator.validateCreate(review)), httpServletRequest);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<Book>> get(@PathVariable String id) {
+    public ResponseEntity<Response<Review>> get(@PathVariable String id) {
 
         return responseEntityBuilder.buildGetResponseEntity(entityService.get(id));
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<Book>> update(@PathVariable String id, @RequestBody @Valid Book book) {
+    public ResponseEntity<Response<Review>> update(@PathVariable String id, @RequestBody @Valid Review review) {
 
-        return responseEntityBuilder.buildUpdateResponseEntity(entityService.update(entityValidator.validateUpdate(id, book)));
+        return responseEntityBuilder.buildUpdateResponseEntity(entityService.update(entityValidator.validateUpdate(id, review)));
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Response<Book>> delete(@PathVariable String id) {
+    public ResponseEntity<Response<Review>> delete(@PathVariable String id) {
 
         return responseEntityBuilder.buildDeleteResponseEntity(entityService.delete(id));
     }

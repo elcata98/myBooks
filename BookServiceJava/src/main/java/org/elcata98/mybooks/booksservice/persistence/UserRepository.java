@@ -6,8 +6,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends EntityRepository<User> {
 
-    @Override
-    default boolean willAccept(Class<?> clazz) {
-        return User.class == clazz;
-    }
 }
