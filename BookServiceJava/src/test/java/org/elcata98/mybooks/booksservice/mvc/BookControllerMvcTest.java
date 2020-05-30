@@ -19,6 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -36,6 +37,8 @@ public class BookControllerMvcTest {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private Book book;
+
+    private final TypeReference<Response<Book>> responseTypeReference = new TypeReference<>() {};
 
     @BeforeEach
     void setUp() {
@@ -84,8 +87,103 @@ public class BookControllerMvcTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andDo(mvcResponse -> assertTrue(mvcResponse.getResponse().getContentAsString().contains(BookValidator.CREATE_BOOK_ERROR_MSG)));
+                .andDo(mvcResponse ->
+                        assertTrue(mvcResponse.getResponse().getContentAsString().contains(BookValidator.CREATE_BOOK_ERROR_MSG))
+                );
     }
+
+    @Test
+    void testGet() throws Exception {
+
+        book = createBook();
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .get("/books/" + book.getId())
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
+                .andDo(mvcResult ->
+                        assertEquals(
+                                book,
+                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
+                        )
+                );
+    }
+
+    @Test
+    void testGetNotFound() throws Exception {
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .get("/books/not_exists")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testUpdate() throws Exception {
+
+        book = createBook();
+        book.setNumVolumes((byte) 10);
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .put("/books/" + book.getId())
+                                .content(objectMapper.writeValueAsString(book))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
+                .andDo(mvcResult ->
+                        assertEquals(
+                                book,
+                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
+                        )
+                );
+    }
+
+    @Test
+    void testUpdateMismatch() throws Exception {
+
+        book = createBook();
+        book.setNumVolumes((byte) 10);
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .put("/books/mismatch")
+                                .content(objectMapper.writeValueAsString(book))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testDelete() throws Exception {
+
+        book = createBook();
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .delete("/books/" + book.getId()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testDeleteError() throws Exception {
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .delete("/books/error"))
+                .andExpect(status().is5xxServerError());
+    }
+
 
     private Book createBook() throws Exception {
 
@@ -102,8 +200,9 @@ public class BookControllerMvcTest {
                 .andExpect(header().exists("Location"))
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
-                        books[0] = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<Response<Book>>() {
-                        }).getResponse());
+                        books[0] =
+                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
+                );
 
         return books[0];
     }
