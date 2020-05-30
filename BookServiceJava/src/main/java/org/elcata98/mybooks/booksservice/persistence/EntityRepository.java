@@ -8,4 +8,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 public interface EntityRepository<T extends Entity> extends EntityAcceptRepository<T> {
 
     T save(final T entity);
+    T findById(final String id);
+    void deleteById(final String id);
 }
