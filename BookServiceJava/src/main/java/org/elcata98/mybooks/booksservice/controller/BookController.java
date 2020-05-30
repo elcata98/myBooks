@@ -2,8 +2,8 @@ package org.elcata98.mybooks.booksservice.controller;
 
 
 import org.elcata98.mybooks.booksservice.model.Book;
+import org.elcata98.mybooks.booksservice.response.BookServiceResponseEntityBuilder;
 import org.elcata98.mybooks.booksservice.response.Response;
-import org.elcata98.mybooks.booksservice.response.ResponseEntityBuilder;
 import org.elcata98.mybooks.booksservice.service.EntityService;
 import org.elcata98.mybooks.booksservice.validator.BookValidator;
 import org.springframework.http.MediaType;
@@ -26,10 +26,10 @@ import java.net.URISyntaxException;
 public class BookController {
 
     private final EntityService entityService;
-    private final ResponseEntityBuilder<Book> bookResponseEntityBuilder;
+    private final BookServiceResponseEntityBuilder<Book> bookResponseEntityBuilder;
     private final BookValidator bookValidator;
 
-    public BookController(final EntityService entityService, final ResponseEntityBuilder<Book> bookResponseEntityBuilder,
+    public BookController(final EntityService entityService, final BookServiceResponseEntityBuilder<Book> bookResponseEntityBuilder,
                           final BookValidator bookValidator) {
         this.entityService = entityService;
         this.bookResponseEntityBuilder = bookResponseEntityBuilder;
@@ -55,8 +55,8 @@ public class BookController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Response<Book>> delete(@PathVariable String id){
+    public ResponseEntity<Response<Book>> delete(@PathVariable String id) {
 
-        return  bookResponseEntityBuilder.buildDeleteResponseEntity(entityService.delete(id, Book.class));
+        return bookResponseEntityBuilder.buildDeleteResponseEntity(entityService.delete(id, Book.class));
     }
 }

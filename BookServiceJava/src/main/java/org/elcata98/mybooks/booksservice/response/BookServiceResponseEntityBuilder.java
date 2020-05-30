@@ -1,6 +1,6 @@
 package org.elcata98.mybooks.booksservice.response;
 
-import org.elcata98.mybooks.booksservice.model.Book;
+import org.elcata98.mybooks.booksservice.model.IdEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -11,22 +11,22 @@ import java.net.URISyntaxException;
 
 
 @Component
-public class BookResponseEntityBuilder implements ResponseEntityBuilder<Book> {
+public class BookServiceResponseEntityBuilder<T extends IdEntity> implements ResponseEntityBuilder<T> {
 
     @Override
-    public ResponseEntity<Response<Book>> buildCreateResponseEntity(final Book instance, final HttpServletRequest httpServletRequest) throws URISyntaxException {
+    public ResponseEntity<Response<T>> buildCreateResponseEntity(final T instance, final HttpServletRequest httpServletRequest) throws URISyntaxException {
 
         return ResponseEntity.created(new URI(httpServletRequest.getRequestURI() + "/" + instance.getId())).body(new Response<>(instance));
     }
 
     @Override
-    public ResponseEntity<Response<Book>> buildUpdateResponseEntity(final Book instance) {
+    public ResponseEntity<Response<T>> buildUpdateResponseEntity(final T instance) {
 
         return buildInstanceBasedResponseEntity(instance);
     }
 
     @Override
-    public ResponseEntity<Response<Book>> buildDeleteResponseEntity(final boolean success) {
+    public ResponseEntity<Response<T>> buildDeleteResponseEntity(final boolean success) {
 
         if (success) {
             return ResponseEntity.noContent().build();
@@ -36,13 +36,13 @@ public class BookResponseEntityBuilder implements ResponseEntityBuilder<Book> {
     }
 
     @Override
-    public ResponseEntity<Response<Book>> buildGetResponseEntity(final Book instance) {
+    public ResponseEntity<Response<T>> buildGetResponseEntity(final T instance) {
 
         return buildInstanceBasedResponseEntity(instance);
     }
 
 
-    private ResponseEntity<Response<Book>> buildInstanceBasedResponseEntity(final Book instance) {
+    private ResponseEntity<Response<T>> buildInstanceBasedResponseEntity(final T instance) {
 
         if (instance == null) {
             return ResponseEntity.notFound().build();
