@@ -1,10 +1,14 @@
 package org.elcata98.mybooks.booksservice.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.elcata98.mybooks.booksservice.util.LocalDateJsonDeserializer;
+import org.elcata98.mybooks.booksservice.util.LocalDateJsonSerializer;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -18,9 +22,9 @@ public class Review extends IdEntity {
     @NotNull
     private User who;
 
-//    private LocalDate when = LocalDate.now();
-
-    private String dummy;
+    @JsonSerialize(using = LocalDateJsonSerializer.class)
+    @JsonDeserialize(using = LocalDateJsonDeserializer.class)
+    private LocalDate when = LocalDate.now();
 
     public Book getBook() {
         return book;
@@ -38,21 +42,12 @@ public class Review extends IdEntity {
         this.who = who;
     }
 
-//    public LocalDate getWhen() {
-//        return when;
-//    }
-//
-//    public void setWhen(LocalDate when) {
-//        this.when = when;
-//    }
-
-
-    public String getDummy() {
-        return dummy;
+    public LocalDate getWhen() {
+        return when;
     }
 
-    public void setDummy(String dummy) {
-        this.dummy = dummy;
+    public void setWhen(LocalDate when) {
+        this.when = when;
     }
 
     @Override

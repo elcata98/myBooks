@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -40,12 +41,9 @@ public class ReviewControllerMvcTest {
 
     private Review review;
 
-    private final TypeReference<Response<Review>> responseTypeReference = new TypeReference<>() {
-    };
-    private final TypeReference<Response<Book>> bookResponseTypeReference = new TypeReference<>() {
-    };
-    private final TypeReference<Response<User>> userResponseTypeReference = new TypeReference<>() {
-    };
+    private final TypeReference<Response<Review>> responseTypeReference = new TypeReference<>() {};
+    private final TypeReference<Response<Book>> bookResponseTypeReference = new TypeReference<>() {};
+    private final TypeReference<Response<User>> userResponseTypeReference = new TypeReference<>() {};
 
 
     @BeforeEach
@@ -135,7 +133,7 @@ public class ReviewControllerMvcTest {
     void testUpdate() throws Exception {
 
         review = createReview();
-        review.setDummy("Dummy");
+        review.setWhen(LocalDate.now());
 
         mockMvc
                 .perform(
@@ -144,30 +142,7 @@ public class ReviewControllerMvcTest {
                                 .content(objectMapper.writeValueAsString(review))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
-                .andDo(mvcResult ->
-                        assertEquals(
-                                review,
-                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
-                        )
-                );
-    }
-
-    @Test
-    void testUpdateMismatch() throws Exception {
-
-        review = createReview();
-        review.setDummy("Dummy");
-
-        mockMvc
-                .perform(
-                        MockMvcRequestBuilders
-                                .put("/reviews/mismatch")
-                                .content(objectMapper.writeValueAsString(review))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
