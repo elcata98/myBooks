@@ -2,7 +2,7 @@ package org.elcata98.mybooks.booksservice.mvc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.elcata98.mybooks.booksservice.model.Book;
+import org.elcata98.mybooks.booksservice.model.User;
 import org.elcata98.mybooks.booksservice.response.Response;
 import org.elcata98.mybooks.booksservice.validator.EntityValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ContextConfiguration
-public class BookControllerMvcTest {
+public class UserControllerMvcTest {
 
     @Autowired
     private WebApplicationContext context;
@@ -36,9 +36,9 @@ public class BookControllerMvcTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private Book book;
+    private User user;
 
-    private final TypeReference<Response<Book>> responseTypeReference = new TypeReference<>() {};
+    private final TypeReference<Response<User>> responseTypeReference = new TypeReference<>() {};
 
     @BeforeEach
     void setUp() {
@@ -47,28 +47,26 @@ public class BookControllerMvcTest {
 
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 
-        book = new Book();
-        book.setTitle("Title - " + now);
-        book.setAuthor("Author - " + now);
-        book.setLanguage("Catalan - " + now);
+        user = new User();
+        user.setUserName("UserName - " + now);
     }
 
     @Test
     void testCreate() throws Exception {
 
-        createBook();
+        createUser();
     }
 
     @Test
     void testCreateNoMandatoryFields() throws Exception {
 
-        book = new Book();
+        user = new User();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/books")
-                                .content(objectMapper.writeValueAsString(book))
+                                .post("/users")
+                                .content(objectMapper.writeValueAsString(user))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -77,13 +75,13 @@ public class BookControllerMvcTest {
     @Test
     void testCreateWithId() throws Exception {
 
-        book.generateId();
+        user.generateId();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/books")
-                                .content(objectMapper.writeValueAsString(book))
+                                .post("/users")
+                                .content(objectMapper.writeValueAsString(user))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -95,18 +93,18 @@ public class BookControllerMvcTest {
     @Test
     void testGet() throws Exception {
 
-        book = createBook();
+        user = createUser();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .get("/books/" + book.getId())
+                                .get("/users/" + user.getId())
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
                         assertEquals(
-                                book,
+                                user,
                                 objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
                         )
                 );
@@ -118,7 +116,7 @@ public class BookControllerMvcTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .get("/books/not_exists")
+                                .get("/users/not_exists")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -126,21 +124,21 @@ public class BookControllerMvcTest {
     @Test
     void testUpdate() throws Exception {
 
-        book = createBook();
-        book.setNumVolumes((byte) 10);
+        user = createUser();
+        user.setRelationship("U know");
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .put("/books/" + book.getId())
-                                .content(objectMapper.writeValueAsString(book))
+                                .put("/users/" + user.getId())
+                                .content(objectMapper.writeValueAsString(user))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
                         assertEquals(
-                                book,
+                                user,
                                 objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
                         )
                 );
@@ -149,14 +147,14 @@ public class BookControllerMvcTest {
     @Test
     void testUpdateMismatch() throws Exception {
 
-        book = createBook();
-        book.setNumVolumes((byte) 10);
+        user = createUser();
+        user.setRelationship("U know");
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .put("/books/mismatch")
-                                .content(objectMapper.writeValueAsString(book))
+                                .put("/users/mismatch")
+                                .content(objectMapper.writeValueAsString(user))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -165,12 +163,12 @@ public class BookControllerMvcTest {
     @Test
     void testDelete() throws Exception {
 
-        book = createBook();
+        user = createUser();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .delete("/books/" + book.getId()))
+                                .delete("/users/" + user.getId()))
                 .andExpect(status().isNoContent());
     }
 
@@ -180,30 +178,30 @@ public class BookControllerMvcTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .delete("/books/error"))
+                                .delete("/users/error"))
                 .andExpect(status().is5xxServerError());
     }
 
 
-    private Book createBook() throws Exception {
+    private User createUser() throws Exception {
 
-        Book[] books = new Book[1];
+        User[] users = new User[1];
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/books")
-                                .content(objectMapper.writeValueAsString(book))
+                                .post("/users")
+                                .content(objectMapper.writeValueAsString(user))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
-                        books[0] =
+                        users[0] =
                                 objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
                 );
 
-        return books[0];
+        return users[0];
     }
 }

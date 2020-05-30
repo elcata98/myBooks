@@ -1,5 +1,6 @@
 package org.elcata98.mybooks.booksservice.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.validation.constraints.NotEmpty;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class User extends IdEntity {
 
     @NotEmpty
