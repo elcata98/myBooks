@@ -1,49 +1,47 @@
 package org.elcata98.mybooks.booksservice.service;
 
 import org.elcata98.mybooks.booksservice.model.IdEntity;
-import org.elcata98.mybooks.booksservice.persistence.RepositoryResolver;
-import org.springframework.stereotype.Service;
+import org.elcata98.mybooks.booksservice.persistence.EntityRepository;
 
-@Service
-public class EntityService {
+public abstract class EntityService<T extends IdEntity> {
 
-    private final RepositoryResolver repositoryResolver;
+    private final EntityRepository<T> entityRepository;
 
-    public EntityService(final RepositoryResolver repositoryResolver) {
-        this.repositoryResolver = repositoryResolver;
+    public EntityService(final EntityRepository<T> entityRepository) {
+        this.entityRepository = entityRepository;
     }
 
-    public <T extends IdEntity> T create(final T entity, final Class<T> clazz) {
+    public T create(final T entity) {
 
         entity.generateId();
 
-        return repositoryResolver.resolveRepository(clazz).save(entity);
+        return entityRepository.save(entity);
     }
 
-    public <T extends IdEntity> T get(final String id, final Class<T> clazz) {
+    public T get(final String id) {
 
-        return repositoryResolver.resolveRepository(clazz).findById(id);
+        return entityRepository.findById(id);
     }
 
-    public <T extends IdEntity> T update(final T entity, final Class<T> clazz) {
+    public T update(final T entity) {
 
-        T existingEntity = repositoryResolver.resolveRepository(clazz).findById(entity.getId());
+        T existingEntity = entityRepository.findById(entity.getId());
 
         if (existingEntity != null) {
-            existingEntity = repositoryResolver.resolveRepository(clazz).save(entity);
+            existingEntity = entityRepository.save(entity);
         }
 
         return existingEntity;
     }
 
-    public <T extends IdEntity> boolean delete(final String id, Class<T> clazz) {
+    public boolean delete(final String id) {
 
         boolean success = false;
 
-        T existingEntity = repositoryResolver.resolveRepository(clazz).findById(id);
+        T existingEntity = entityRepository.findById(id);
 
         if (existingEntity != null) {
-            repositoryResolver.resolveRepository(clazz).deleteById(id);
+            entityRepository.deleteById(id);
             success = true;
         }
 

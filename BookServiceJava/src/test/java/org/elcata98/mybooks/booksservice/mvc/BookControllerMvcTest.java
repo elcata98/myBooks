@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elcata98.mybooks.booksservice.model.Book;
 import org.elcata98.mybooks.booksservice.response.Response;
-import org.elcata98.mybooks.booksservice.validator.BookValidator;
+import org.elcata98.mybooks.booksservice.validator.EntityValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +88,7 @@ public class BookControllerMvcTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(mvcResponse ->
-                        assertTrue(mvcResponse.getResponse().getContentAsString().contains(BookValidator.CREATE_BOOK_ERROR_MSG))
+                        assertTrue(mvcResponse.getResponse().getContentAsString().contains(EntityValidator.CREATE_ERROR_MSG))
                 );
     }
 
