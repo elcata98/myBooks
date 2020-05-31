@@ -1,0 +1,22 @@
+{
+  "book": {
+    "id": "1b30f30f-b525-462e-b77c-21dae5395d11",
+    "author": "Douglas Squirrel & Jeffrey Fredrick",
+    "edition": "1st",
+    "editorial": "IT Revolution",
+    "isbn": "9781942788973",
+    "language": "English",
+    "location": "Takatsu",
+    "numVolumes": 1,
+    "summary": "A successful digital transformation starts with a conversational transformation",
+    "title": "Agile Conversations",
+    "volume": 1,
+    "year": 2020
+  },
+  "user": {
+    "id": "d0266be6-72de-4717-a20b-46e661128b1b",
+    "fullName": "Francisco Martinez Posadas",
+    "relationship": "Jo",
+    "userName": "LordCoppola"
+  }
+}

@@ -11,13 +11,12 @@ import org.elcata98.mybooks.booksservice.util.LocalDateJsonDeserializer;
 import org.elcata98.mybooks.booksservice.util.LocalDateJsonSerializer;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-@Document(collection = "reviews")
+@Document(collection = "lendings")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class Review extends IdEntity {
+public class Lending extends IdEntity {
 
     @NotNull
     private Book book;
@@ -27,10 +26,11 @@ public class Review extends IdEntity {
 
     @JsonSerialize(using = LocalDateJsonSerializer.class)
     @JsonDeserialize(using = LocalDateJsonDeserializer.class)
-    private LocalDate when = LocalDate.now();
+    private LocalDate startDate = LocalDate.now();
 
-    @NotEmpty
-    private String review;
+    @JsonSerialize(using = LocalDateJsonSerializer.class)
+    @JsonDeserialize(using = LocalDateJsonDeserializer.class)
+    private LocalDate endDate;
 
     public Book getBook() {
         return book;
@@ -48,20 +48,20 @@ public class Review extends IdEntity {
         this.who = who;
     }
 
-    public LocalDate getWhen() {
-        return when;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setWhen(LocalDate when) {
-        this.when = when;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public String getReview() {
-        return review;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setReview(String review) {
-        this.review = review;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     @Override

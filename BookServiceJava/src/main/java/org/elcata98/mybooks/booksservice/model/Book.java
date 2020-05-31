@@ -5,9 +5,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
 
+@Document(collection = "books")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Book extends IdEntity {
 
@@ -29,6 +31,7 @@ public class Book extends IdEntity {
     private Byte volume = 1;
     private String location;
     private String summary;
+    private BookFormat bookFormat = BookFormat.PAPERBACK;
 
     public String getTitle() {
         return title;
@@ -124,6 +127,14 @@ public class Book extends IdEntity {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public BookFormat getBookFormat() {
+        return bookFormat;
+    }
+
+    public void setBookFormat(BookFormat bookFormat) {
+        this.bookFormat = bookFormat;
     }
 
     @Override
