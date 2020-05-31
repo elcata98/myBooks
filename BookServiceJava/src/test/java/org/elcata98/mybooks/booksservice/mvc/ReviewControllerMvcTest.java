@@ -2,6 +2,8 @@ package org.elcata98.mybooks.booksservice.mvc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elcata98.mybooks.booksservice.model.Book;
+import org.elcata98.mybooks.booksservice.model.Review;
 import org.elcata98.mybooks.booksservice.model.User;
 import org.elcata98.mybooks.booksservice.response.Response;
 import org.elcata98.mybooks.booksservice.validator.EntityValidator;
@@ -16,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -27,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ContextConfiguration
-public class UserControllerMvcTest {
+public class ReviewControllerMvcTest {
 
     @Autowired
     private WebApplicationContext context;
@@ -36,37 +39,42 @@ public class UserControllerMvcTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private User user;
+    private Review review;
 
-    private final TypeReference<Response<User>> responseTypeReference = new TypeReference<>() {};
+    private final TypeReference<Response<Review>> responseTypeReference = new TypeReference<>() {};
+    private final TypeReference<Response<Book>> bookResponseTypeReference = new TypeReference<>() {};
+    private final TypeReference<Response<User>> userResponseTypeReference = new TypeReference<>() {};
+
 
     @BeforeEach
-    void setUp() {
-
-        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+    void setUp() throws Exception {
 
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 
-        user = new User();
-        user.setUserName("UserName - " + now);
+        Book book = createBook();
+        User user = createUser();
+
+        review = new Review();
+        review.setBook(book);
+        review.setWho(user);
     }
 
     @Test
     void testCreate() throws Exception {
 
-        createUser();
+        createReview();
     }
 
     @Test
     void testCreateNoMandatoryFields() throws Exception {
 
-        user = new User();
+        review = new Review();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/users")
-                                .content(objectMapper.writeValueAsString(user))
+                                .post("/reviews")
+                                .content(objectMapper.writeValueAsString(review))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -75,13 +83,13 @@ public class UserControllerMvcTest {
     @Test
     void testCreateWithId() throws Exception {
 
-        user.generateId();
+        review.generateId();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/users")
-                                .content(objectMapper.writeValueAsString(user))
+                                .post("/reviews")
+                                .content(objectMapper.writeValueAsString(review))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -93,18 +101,18 @@ public class UserControllerMvcTest {
     @Test
     void testGet() throws Exception {
 
-        user = createUser();
+        review = createReview();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .get("/users/" + user.getId())
+                                .get("/reviews/" + review.getId())
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
                         assertEquals(
-                                user,
+                                review,
                                 objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
                         )
                 );
@@ -116,7 +124,7 @@ public class UserControllerMvcTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .get("/users/not_exists")
+                                .get("/reviews/not_exists")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -124,51 +132,28 @@ public class UserControllerMvcTest {
     @Test
     void testUpdate() throws Exception {
 
-        user = createUser();
-        user.setRelationship("U know");
+        review = createReview();
+        review.setWhen(LocalDate.now());
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .put("/users/" + user.getId())
-                                .content(objectMapper.writeValueAsString(user))
+                                .put("/reviews/" + review.getId())
+                                .content(objectMapper.writeValueAsString(review))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
-                .andDo(mvcResult ->
-                        assertEquals(
-                                user,
-                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
-                        )
-                );
-    }
-
-    @Test
-    void testUpdateMismatch() throws Exception {
-
-        user = createUser();
-        user.setRelationship("U know");
-
-        mockMvc
-                .perform(
-                        MockMvcRequestBuilders
-                                .put("/users/mismatch")
-                                .content(objectMapper.writeValueAsString(user))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
     void testDelete() throws Exception {
 
-        user = createUser();
+        review = createReview();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .delete("/users/" + user.getId()))
+                                .delete("/reviews/" + review.getId()))
                 .andExpect(status().isNoContent());
     }
 
@@ -178,11 +163,67 @@ public class UserControllerMvcTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .delete("/users/error"))
+                                .delete("/reviews/error"))
                 .andExpect(status().is5xxServerError());
     }
 
+    private Review createReview() throws Exception {
+
+        Review[] reviews = new Review[1];
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .post("/reviews")
+                                .content(objectMapper.writeValueAsString(review))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
+                .andDo(mvcResult ->
+                        reviews[0] =
+                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
+                );
+
+        return reviews[0];
+    }
+
+    private Book createBook() throws Exception {
+
+        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+
+        Book book = new Book();
+        book.setTitle("Title - " + now);
+        book.setAuthor("Author - " + now);
+        book.setLanguage("Catalan - " + now);
+
+        Book[] books = new Book[1];
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .post("/books")
+                                .content(objectMapper.writeValueAsString(book))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
+                .andDo(mvcResult ->
+                        books[0] =
+                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), bookResponseTypeReference).getResponse()
+                );
+
+        return books[0];
+    }
+
     private User createUser() throws Exception {
+
+        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+
+        User user = new User();
+        user.setUserName("UserName - " + now);
 
         User[] users = new User[1];
 
@@ -198,7 +239,7 @@ public class UserControllerMvcTest {
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
                         users[0] =
-                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
+                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), userResponseTypeReference).getResponse()
                 );
 
         return users[0];

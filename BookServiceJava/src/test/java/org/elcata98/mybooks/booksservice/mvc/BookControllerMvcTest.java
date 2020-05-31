@@ -184,7 +184,6 @@ public class BookControllerMvcTest {
                 .andExpect(status().is5xxServerError());
     }
 
-
     private Book createBook() throws Exception {
 
         Book[] books = new Book[1];

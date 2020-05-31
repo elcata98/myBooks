@@ -6,8 +6,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookRepository extends EntityRepository<Book> {
 
-    @Override
-    default boolean willAccept(Class<?> clazz) {
-        return Book.class == clazz;
-    }
 }
