@@ -2,6 +2,8 @@ package org.elcata98.mybooks.booksservice.mvc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elcata98.mybooks.booksservice.model.Book;
+import org.elcata98.mybooks.booksservice.model.Lending;
 import org.elcata98.mybooks.booksservice.model.User;
 import org.elcata98.mybooks.booksservice.response.Response;
 import org.elcata98.mybooks.booksservice.validator.EntityValidator;
@@ -17,11 +19,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @SpringBootTest
 @ContextConfiguration
-public class UserControllerMvcTest {
+public class LendingControllerMvcTest {
 
     @Autowired
     private WebApplicationContext context;
@@ -38,37 +42,42 @@ public class UserControllerMvcTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private User user;
+    private Lending lending;
 
-    private final TypeReference<Response<User>> responseTypeReference = new TypeReference<>() {};
+    private final TypeReference<Response<Lending>> responseTypeReference = new TypeReference<>() {};
+    private final TypeReference<Response<Book>> bookResponseTypeReference = new TypeReference<>() {};
+    private final TypeReference<Response<User>> userResponseTypeReference = new TypeReference<>() {};
+
 
     @BeforeEach
-    void setUp() {
-
-        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+    void setUp() throws Exception {
 
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 
-        user = new User();
-        user.setUserName("UserName - " + now);
+        Book book = createBook();
+        User user = createUser();
+
+        lending = new Lending();
+        lending.setBook(book);
+        lending.setWho(user);
     }
 
     @Test
     void testCreate() throws Exception {
 
-        createUser();
+        createLending();
     }
 
     @Test
     void testCreateNoMandatoryFields() throws Exception {
 
-        user = new User();
+        lending = new Lending();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/users")
-                                .content(objectMapper.writeValueAsString(user))
+                                .post("/lendings")
+                                .content(objectMapper.writeValueAsString(lending))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -77,13 +86,13 @@ public class UserControllerMvcTest {
     @Test
     void testCreateWithId() throws Exception {
 
-        user.generateId();
+        lending.generateId();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/users")
-                                .content(objectMapper.writeValueAsString(user))
+                                .post("/lendings")
+                                .content(objectMapper.writeValueAsString(lending))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -95,18 +104,18 @@ public class UserControllerMvcTest {
     @Test
     void testGet() throws Exception {
 
-        user = createUser();
+        lending = createLending();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .get("/users/" + user.getId())
+                                .get("/lendings/" + lending.getId())
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
                         assertEquals(
-                                user,
+                                lending,
                                 objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
                         )
                 );
@@ -118,7 +127,7 @@ public class UserControllerMvcTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .get("/users/not_exists")
+                                .get("/lendings/not_exists")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -126,37 +135,48 @@ public class UserControllerMvcTest {
     @Test
     void testUpdate() throws Exception {
 
-        user = createUser();
-        user.setRelationship("U know");
+        lending = createLending();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .put("/users/" + user.getId())
-                                .content(objectMapper.writeValueAsString(user))
+                                .put("/lendings/" + lending.getId())
+                                .content(objectMapper.writeValueAsString(lending))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
-                        assertEquals(
-                                user,
-                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
-                        )
+                        assertNotNull(objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse().getEndDate())
                 );
+    }
+
+    @Test
+    void testUpdateNotAllowed() throws Exception {
+
+        lending = createLending();
+        lending.setEndDate(LocalDate.now());
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .put("/lendings/" + lending.getId())
+                                .content(objectMapper.writeValueAsString(lending))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     void testUpdateMismatch() throws Exception {
 
-        user = createUser();
-        user.setRelationship("U know");
+        lending = createLending();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .put("/users/mismatch")
-                                .content(objectMapper.writeValueAsString(user))
+                                .put("/books/mismatch")
+                                .content(objectMapper.writeValueAsString(lending))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -165,26 +185,72 @@ public class UserControllerMvcTest {
     @Test
     void testDelete() throws Exception {
 
-        user = createUser();
+        lending = createLending();
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .delete("/users/" + user.getId()))
-                .andExpect(status().isNoContent());
+                                .delete("/lendings/" + lending.getId()))
+                .andExpect(status().isMethodNotAllowed());
     }
 
-    @Test
-    void testDeleteError() throws Exception {
+    private Lending createLending() throws Exception {
+
+        Lending[] lendings = new Lending[1];
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .delete("/users/error"))
-                .andExpect(status().is5xxServerError());
+                                .post("/lendings")
+                                .content(objectMapper.writeValueAsString(lending))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
+                .andDo(mvcResult ->
+                        lendings[0] =
+                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
+                );
+
+        return lendings[0];
+    }
+
+    private Book createBook() throws Exception {
+
+        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+
+        Book book = new Book();
+        book.setTitle("Title - " + now);
+        book.setAuthor("Author - " + now);
+        book.setLanguage("Catalan - " + now);
+
+        Book[] books = new Book[1];
+
+        mockMvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .post("/books")
+                                .content(objectMapper.writeValueAsString(book))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
+                .andDo(mvcResult ->
+                        books[0] =
+                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), bookResponseTypeReference).getResponse()
+                );
+
+        return books[0];
     }
 
     private User createUser() throws Exception {
+
+        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+
+        User user = new User();
+        user.setUserName("UserName - " + now);
 
         User[] users = new User[1];
 
@@ -200,7 +266,7 @@ public class UserControllerMvcTest {
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
                         users[0] =
-                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse()
+                                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), userResponseTypeReference).getResponse()
                 );
 
         return users[0];
