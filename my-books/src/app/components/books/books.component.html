@@ -1,19 +1,30 @@
-<h2>{{book.title}}</h2>
+<ul class="books">
+    <li *ngFor="let book of books" (click)="onSelect(book)" [class.selected]="book === selectedBook">
+        <a>
+            <!-- <a routerLink="/detail/{{book.id}}"> -->
+            <span class="badge">{{book.title}}</span>
+        </a>
+        <button class="delete" title="delete book">x</button>
+    </li>
+</ul>
 
-<div>
-    <label>Title:
-        <input [(ngModel)]="book.title" placeholder="title" />
-    </label>
-</div>
 
-<div>
-    <label>Author:
-        <input [(ngModel)]="book.author" placeholder="author" />
-    </label>
-</div>
-
-<div>
-    <label>Language:
-        <input [(ngModel)]="book.language" placeholder="language" />
-    </label>
+<div *ngIf="selectedBook">
+    <p>
+        <label>Title:
+            <input [(ngModel)]="selectedBook.title" placeholder="title" />
+        </label>
+        <br />
+    </p>
+    <p>
+        <label>Author:
+            <input [(ngModel)]="selectedBook.author" placeholder="author" />
+        </label>
+        <br />
+    </p>
+    <p>
+        <label>Language:
+            <input [(ngModel)]="selectedBook.language" placeholder="language" />
+        </label>
+    </p>
 </div>

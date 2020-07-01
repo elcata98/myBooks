@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Book } from '../../model/book';
 
+import { BOOKS } from '../../model/mock-books';
+
 @Component({
   selector: 'app-books',
   templateUrl: './books.component.html',
@@ -8,17 +10,17 @@ import { Book } from '../../model/book';
 })
 export class BooksComponent implements OnInit {
 
-  book: Book = {
-    id: 'Book Id',
-    
-    title: 'Book Title',
-    author: 'Book Author',
-    language: 'Book Language'    
-  }
+  books = BOOKS;
+
+  selectedBook: Book;
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  onSelect(book: Book): void {
+    this.selectedBook = book;
   }
 
 }

@@ -23,6 +23,16 @@
     left: .1em;
 }
 
+.books li.selected {
+    background-color: #CFD8DC;
+    color: white;
+}
+
+.books li.selected:hover {
+    background-color: #BBD8DC;
+    color: white;
+}
+
 .books a {
     color: #333;
     text-decoration: none;
