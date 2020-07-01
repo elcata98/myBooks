@@ -1,6 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
-import {Book} from '../../model/book';
+import { BookService } from '../../services/book.service';
+
+import { Book } from '../../model/book';
 
 @Component({
   selector: 'app-book-detail',
@@ -10,10 +14,25 @@ import {Book} from '../../model/book';
 export class BookDetailComponent implements OnInit {
 
   @Input() book: Book;
-  
-  constructor() { }
+
+  constructor(
+    private route: ActivatedRoute,
+    private bookService: BookService,
+    private location: Location
+  ) { }
 
   ngOnInit(): void {
+    this.loadBook();
   }
 
+  loadBook(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+
+    this.bookService.getBook(id)
+      .subscribe(book => this.book = book);
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
 }

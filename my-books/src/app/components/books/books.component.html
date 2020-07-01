@@ -1,11 +1,8 @@
 <ul class="books">
-    <li *ngFor="let book of books" (click)="onSelect(book)" [class.selected]="book === selectedBook">
-        <a>
-            <!-- <a routerLink="/detail/{{book.id}}"> -->
+    <li *ngFor="let book of books">
+        <a routerLink="/detail/{{book.id}}">
             <span class="badge">{{book.title}}</span>
         </a>
         <button class="delete" title="delete book">x</button>
     </li>
 </ul>
-
-<app-book-detail [book]="selectedBook"></app-book-detail>

@@ -14,16 +14,10 @@ export class BooksComponent implements OnInit {
 
   books: Book[];
 
-  selectedBook: Book;
-
   constructor(private bookService: BookService) { }
 
   ngOnInit(): void {
     this.getBooks();
-  }
-
-  onSelect(book: Book): void {
-    this.selectedBook = book;
   }
 
   getBooks(): void {
