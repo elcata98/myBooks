@@ -8,23 +8,4 @@
     </li>
 </ul>
 
-
-<div *ngIf="selectedBook">
-    <p>
-        <label>Title:
-            <input [(ngModel)]="selectedBook.title" placeholder="title" />
-        </label>
-        <br />
-    </p>
-    <p>
-        <label>Author:
-            <input [(ngModel)]="selectedBook.author" placeholder="author" />
-        </label>
-        <br />
-    </p>
-    <p>
-        <label>Language:
-            <input [(ngModel)]="selectedBook.language" placeholder="language" />
-        </label>
-    </p>
-</div>
+<app-book-detail [book]="selectedBook"></app-book-detail>
