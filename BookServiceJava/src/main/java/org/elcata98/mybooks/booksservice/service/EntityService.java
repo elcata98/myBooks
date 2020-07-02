@@ -3,6 +3,8 @@ package org.elcata98.mybooks.booksservice.service;
 import org.elcata98.mybooks.booksservice.model.IdEntity;
 import org.elcata98.mybooks.booksservice.persistence.EntityRepository;
 
+import java.util.List;
+
 public abstract class EntityService<T extends IdEntity> {
 
     private final EntityRepository<T> entityRepository;
@@ -46,5 +48,10 @@ public abstract class EntityService<T extends IdEntity> {
         }
 
         return success;
+    }
+
+    public List<T> findAll(){
+
+        return entityRepository.findAll();
     }
 }

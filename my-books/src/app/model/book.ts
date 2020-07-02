@@ -5,7 +5,7 @@ export interface Book {
     title: string;
     author: string;
     language: string;
-/*
+
     year: number;
     isbn: string;
     editorial: string;
@@ -16,5 +16,4 @@ export interface Book {
     location: string;
     summary: string;
     bookFormat: string // BookFormat enum on backend
-    */
 }

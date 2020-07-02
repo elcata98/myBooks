@@ -3,8 +3,6 @@ import { BookService } from '../../services/book.service';
 
 import { Book } from '../../model/book';
 
-import { BOOKS } from '../../model/mock-books';
-
 @Component({
   selector: 'app-books',
   templateUrl: './books.component.html',
@@ -22,6 +20,6 @@ export class BooksComponent implements OnInit {
 
   getBooks(): void {
     this.bookService.getBooks()
-      .subscribe(books => this.books = books);
+      .subscribe(books => this.books = books.response);
   }
 }
