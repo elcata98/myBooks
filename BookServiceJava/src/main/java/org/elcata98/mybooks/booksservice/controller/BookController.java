@@ -8,6 +8,7 @@ import org.elcata98.mybooks.booksservice.service.EntityService;
 import org.elcata98.mybooks.booksservice.validator.EntityValidator;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URISyntaxException;
+import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping(path = "/books")
 public class BookController {
@@ -58,5 +61,11 @@ public class BookController {
     public ResponseEntity<Response<Book>> delete(@PathVariable String id) {
 
         return responseEntityBuilder.buildDeleteResponseEntity(entityService.delete(id));
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<List<Book>>> findAll() {
+
+        return responseEntityBuilder.buildListResponse(entityService.findAll());
     }
 }

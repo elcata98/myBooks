@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 
 public abstract class ResponseEntityBuilder<T extends IdEntity> {
@@ -35,6 +36,13 @@ public abstract class ResponseEntityBuilder<T extends IdEntity> {
         return buildInstanceBasedResponseEntity(instance);
     }
 
+    public ResponseEntity<Response<List<T>>> buildListResponse(final List<T> instances) {
+        if (instances == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(new Response<>(instances));
+        }
+    }
 
     private ResponseEntity<Response<T>> buildInstanceBasedResponseEntity(final T instance) {
 

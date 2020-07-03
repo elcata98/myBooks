@@ -13,7 +13,7 @@ import { Book } from '../../model/book';
 })
 export class BookDetailComponent implements OnInit {
 
-  @Input() book: Book;
+  book: Book;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,7 +29,7 @@ export class BookDetailComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     this.bookService.getBook(id)
-      .subscribe(book => this.book = book);
+      .subscribe(response => this.book = response.response);
   }
 
   goBack(): void {
