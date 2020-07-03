@@ -1,20 +1,71 @@
 <div *ngIf="book">
-    <p>
-        <label>Title:
-            <input [(ngModel)]="book.title" placeholder="title" />
-        </label>
-        <br />
-    </p>
-    <p>
-        <label>Author:
-            <input [(ngModel)]="book.author" placeholder="author" />
-        </label>
-        <br />
-    </p>
-    <p>
-        <label>Language:
-            <input [(ngModel)]="book.language" placeholder="language" />
-        </label>
-    </p>
+    <div>
+        <p>
+            <label>Title:
+                <input [(ngModel)]="book.title" placeholder="title" disabled />
+            </label>
+            <br />
+        </p>
+        <p>
+            <label>Author:
+                <input [(ngModel)]="book.author" placeholder="author" disabled />
+            </label>
+            <br />
+        </p>
+    </div>
+    <div>
+        <p>
+            <label>Language:
+                <input [(ngModel)]="book.language" placeholder="language" disabled />
+            </label>
+        </p>
+        <p>
+            <label>Format:
+                <input [(ngModel)]="book.bookFormat" placeholder="bookFormat" disabled />
+            </label>
+        </p>
+    </div>
+    <div>
+        <p>
+            <label>Year:
+                <input [(ngModel)]="book.year" placeholder="year" disabled />
+            </label>
+        </p>
+        <p>
+            <label>ISBN:
+                <input [(ngModel)]="book.isbn" placeholder="isbn" disabled />
+            </label>
+        </p>
+        <p>
+            <label>Editorial:
+                <input [(ngModel)]="book.editorial" placeholder="editorial" disabled />
+            </label>
+        </p>
+        <p>
+            <label>Collection:
+                <input [(ngModel)]="book.collection" placeholder="collection" disabled />
+            </label>
+        </p>
+        <p>
+            <label>Edition:
+                <input [(ngModel)]="book.edition" placeholder="edition" disabled />
+            </label>
+        </p>
+        <p>
+            <label>Number of Volumes:
+                <input [(ngModel)]="book.numVolumes" placeholder="numVolumes" disabled />
+            </label>
+        </p>
+        <p>
+            <label>Location:
+                <input [(ngModel)]="book.location" placeholder="location" disabled />
+            </label>
+        </p>
+        <p>
+            <label>Summary:
+                <textarea [(ngModel)]="book.summary" placeholder="summary" disabled></textarea>
+            </label>
+        </p>
+    </div>
 </div>
 <button (click)="goBack()">Back</button>
