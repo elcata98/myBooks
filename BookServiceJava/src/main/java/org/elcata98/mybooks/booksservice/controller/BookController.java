@@ -23,7 +23,7 @@ import javax.validation.Valid;
 import java.net.URISyntaxException;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:4200", "https://mybooks-ui.dt.r.appspot.com/"})
+@CrossOrigin(origins = {"http://localhost:4200", "https://mybooks-ui.dt.r.appspot.com/*"})
 @RestController
 @RequestMapping(path = "/books")
 public class BookController {
