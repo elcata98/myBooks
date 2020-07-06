@@ -14,7 +14,7 @@ import { Response } from '../model/response';
 })
 export class BookService {
 
-  private booksUrl = 'http://localhost:8080/booksService/books';
+  private booksUrl = 'https://onyx-elevator-282208.an.r.appspot.com/booksService/books';
 
   private emptyListResponse: Response<Book[]> = {
     response: []
