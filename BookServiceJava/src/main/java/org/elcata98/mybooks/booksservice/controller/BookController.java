@@ -8,7 +8,6 @@ import org.elcata98.mybooks.booksservice.service.EntityService;
 import org.elcata98.mybooks.booksservice.validator.EntityValidator;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +22,6 @@ import javax.validation.Valid;
 import java.net.URISyntaxException;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:4200", "https://mybooks-ui.dt.r.appspot.com/*"})
 @RestController
 @RequestMapping(path = "/books")
 public class BookController {
