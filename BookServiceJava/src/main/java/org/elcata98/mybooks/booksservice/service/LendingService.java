@@ -25,35 +25,23 @@ public class LendingService extends EntityService<Lending> {
     @Override
     public Lending create(final Lending entity) {
 
-        return super.create(preProcessLending(entity));
+        Book book = bookEntityRepository.findById(entity.getBook().getId());
+        Assert.notNull(book, "Invalid book");
+
+        User user = userEntityRepository.findById(entity.getWho().getId());
+        Assert.notNull(user, "Invalid user");
+
+        entity.setBook(book);
+        entity.setWho(user);
+
+        return super.create(entity);
     }
 
     @Override
     public Lending update(final Lending entity) {
 
-        Lending existingLending = get(entity.getId());
-
-        Assert.isTrue(entity.getBook().getId().equals(existingLending.getBook().getId()), "Cannot modify existing book");
-        Assert.isTrue(entity.getWho().getId().equals(existingLending.getWho().getId()), "Cannot modify existing user");
-        Assert.isTrue(entity.getStartDate().equals(existingLending.getStartDate()), "Cannot modify existing start date");
-        Assert.isNull(entity.getEndDate(), "Cannot manually update end date");
-
         entity.setEndDate(LocalDate.now());
 
-        return super.update(preProcessLending(entity));
-    }
-
-    private Lending preProcessLending(final Lending lending) {
-
-        Book book = bookEntityRepository.findById(lending.getBook().getId());
-        Assert.notNull(book, "Invalid book");
-
-        User user = userEntityRepository.findById(lending.getWho().getId());
-        Assert.notNull(user, "Invalid user");
-
-        lending.setBook(book);
-        lending.setWho(user);
-
-        return lending;
+        return super.update(entity);
     }
 }

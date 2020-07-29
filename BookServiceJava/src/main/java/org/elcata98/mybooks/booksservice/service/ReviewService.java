@@ -25,11 +25,6 @@ public class ReviewService extends EntityService<Review> {
         return super.create(preProcessReview(entity));
     }
 
-    @Override
-    public Review update(final Review entity) {
-        return super.update(preProcessReview(entity));
-    }
-
     private Review preProcessReview(final Review review) {
 
         Book book = bookEntityRepository.findById(review.getBook().getId());
