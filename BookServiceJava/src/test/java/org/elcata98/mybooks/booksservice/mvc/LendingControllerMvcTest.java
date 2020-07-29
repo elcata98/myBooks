@@ -140,31 +140,12 @@ public class LendingControllerMvcTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .put("/lendings/" + lending.getId())
-                                .content(objectMapper.writeValueAsString(lending))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
+                                .put("/lendings/" + lending.getId()))
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> assertFalse(mvcResult.getResponse().getContentAsString().isEmpty()))
                 .andDo(mvcResult ->
                         assertNotNull(objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseTypeReference).getResponse().getEndDate())
                 );
-    }
-
-    @Test
-    void testUpdateNotAllowed() throws Exception {
-
-        lending = createLending();
-        lending.setEndDate(LocalDate.now());
-
-        mockMvc
-                .perform(
-                        MockMvcRequestBuilders
-                                .put("/lendings/" + lending.getId())
-                                .content(objectMapper.writeValueAsString(lending))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -175,10 +156,7 @@ public class LendingControllerMvcTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .put("/books/mismatch")
-                                .content(objectMapper.writeValueAsString(lending))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
+                                .put("/lendings/mismatch"))
                 .andExpect(status().isBadRequest());
     }
 

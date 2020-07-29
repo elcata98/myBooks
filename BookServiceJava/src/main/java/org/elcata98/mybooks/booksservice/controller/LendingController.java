@@ -48,9 +48,9 @@ public class LendingController {
         return responseEntityBuilder.buildGetResponseEntity(entityService.get(id));
     }
 
-    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<Lending>> update(@PathVariable String id, @RequestBody @Valid Lending lending) {
+    @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<Lending>> update(@PathVariable String id) {
 
-        return responseEntityBuilder.buildUpdateResponseEntity(entityService.update(entityValidator.validateUpdate(id, lending)));
+        return responseEntityBuilder.buildUpdateResponseEntity(entityService.update(entityValidator.validateUpdate(id, entityService.get(id))));
     }
 }
