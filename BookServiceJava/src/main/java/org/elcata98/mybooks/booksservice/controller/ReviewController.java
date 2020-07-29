@@ -51,6 +51,7 @@ public class ReviewController {
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Response<Review>> delete(@PathVariable String id) {
 
-        return responseEntityBuilder.buildDeleteResponseEntity(entityService.delete(id));
+        entityService.delete(id);
+        return responseEntityBuilder.buildDeleteResponseEntity();
     }
 }

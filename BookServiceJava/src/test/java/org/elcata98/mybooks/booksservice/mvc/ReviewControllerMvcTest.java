@@ -161,13 +161,13 @@ public class ReviewControllerMvcTest {
     }
 
     @Test
-    void testDeleteError() throws Exception {
+    void testDeleteNotFound() throws Exception {
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
                                 .delete("/reviews/error"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNoContent());
     }
 
     private Review createReview() throws Exception {

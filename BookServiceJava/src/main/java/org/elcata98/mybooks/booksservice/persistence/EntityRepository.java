@@ -12,6 +12,7 @@ public interface EntityRepository<T extends Entity> extends Repository<T, String
 
     T save(final T entity);
     T findById(final String id);
+    boolean existsById(final String id);
     void deleteById(final String id);
     List<T> findAll();
 }

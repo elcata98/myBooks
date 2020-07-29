@@ -22,13 +22,9 @@ public abstract class ResponseEntityBuilder<T extends IdEntity> {
         return buildInstanceBasedResponseEntity(instance);
     }
 
-    public ResponseEntity<Response<T>> buildDeleteResponseEntity(final boolean success) {
+    public ResponseEntity<Response<T>> buildDeleteResponseEntity() {
 
-        if (success) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return ResponseEntity.noContent().build();
     }
 
     public ResponseEntity<Response<T>> buildGetResponseEntity(final T instance) {

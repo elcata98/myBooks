@@ -36,7 +36,7 @@ public class UserControllerMvcTest {
 
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private User user;
 
@@ -175,13 +175,13 @@ public class UserControllerMvcTest {
     }
 
     @Test
-    void testDeleteError() throws Exception {
+    void testDeleteNotFound() throws Exception {
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
                                 .delete("/users/error"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNoContent());
     }
 
     private User createUser() throws Exception {
