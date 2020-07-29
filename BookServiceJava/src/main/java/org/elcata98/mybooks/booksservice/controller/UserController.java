@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -58,6 +59,13 @@ public class UserController {
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Response<User>> delete(@PathVariable String id) {
 
-        return responseEntityBuilder.buildDeleteResponseEntity(entityService.delete(id));
+        entityService.delete(id);
+        return responseEntityBuilder.buildDeleteResponseEntity();
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<List<User>>> findAll() {
+
+        return responseEntityBuilder.buildListResponse(entityService.findAll());
     }
 }

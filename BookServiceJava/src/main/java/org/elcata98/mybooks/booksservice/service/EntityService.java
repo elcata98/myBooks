@@ -36,18 +36,11 @@ public abstract class EntityService<T extends IdEntity> {
         return existingEntity;
     }
 
-    public boolean delete(final String id) {
+    public void delete(final String id) {
 
-        boolean success = false;
-
-        T existingEntity = entityRepository.findById(id);
-
-        if (existingEntity != null) {
+        if (entityRepository.existsById(id)) {
             entityRepository.deleteById(id);
-            success = true;
         }
-
-        return success;
     }
 
     public List<T> findAll(){

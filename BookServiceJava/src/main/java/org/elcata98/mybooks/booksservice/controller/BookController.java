@@ -58,7 +58,8 @@ public class BookController {
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Response<Book>> delete(@PathVariable String id) {
 
-        return responseEntityBuilder.buildDeleteResponseEntity(entityService.delete(id));
+        entityService.delete(id);
+        return responseEntityBuilder.buildDeleteResponseEntity();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

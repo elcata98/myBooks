@@ -36,7 +36,7 @@ public class BookControllerMvcTest {
 
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private Book book;
 
@@ -177,13 +177,13 @@ public class BookControllerMvcTest {
     }
 
     @Test
-    void testDeleteError() throws Exception {
+    void testDeleteNotFound() throws Exception {
 
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
                                 .delete("/books/error"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNoContent());
     }
 
     private Book createBook() throws Exception {
